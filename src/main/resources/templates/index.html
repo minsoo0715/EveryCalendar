@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="HandheldFriendly" content="true">
+
+    <title>everyCalendar</title>
+    <style>
+        html{
+            touch-action: none;
+            -webkit-text-size-adjust: none;
+            text-size-adjust: none;
+        }
+
+        @font-face {
+            font-family: 'NanumSquare';
+            src: url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css') format('css');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            background-color: #FCF6F5;
+            font-family: 'NanumSquare', sans-serif;
+        }
+        .header {
+            font-weight: bold;
+            color: #A4193D
+        }
+
+        .sub-header {
+            color: #A4193D
+        }
+
+
+
+        .description {
+            color: black;
+        }
+
+        input[type=submit] {
+            background-color: #990011;
+            color: #FCF6F5
+        }
+
+        input[type=date] {
+            color: #990011
+        }
+
+        label {
+            align-self: center;
+            color: #990011
+        }
+
+
+
+
+
+        /*
+        길이 관련
+        */
+        @media screen and (min-width: 965px) {
+
+
+            .warn{
+                display: block !important;
+            }
+
+            div {
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 964px) {
+            .warn {
+                display: none;
+            }
+
+            body {
+                overflow: scroll;
+                height: 90vh;
+                display: flex;
+                justify-content: flex-start;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header {
+                font-size: 45px;
+                text-align: center;
+                flex-grow: 0;
+            }
+
+            .sub-header {
+                font-size: 25px;
+                flex-grow: 0;
+                text-align: center;
+            }
+
+            form {
+                flex-grow: 2;
+                flex-direction: column;
+                display: flex;
+            }
+
+            .description {
+                flex-grow: 1;
+                margin-top: auto;
+            }
+
+            .form-group {
+                flex-grow: 1;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                flex-direction: row;
+            }
+
+            input {
+                border: 0;
+                height: 100%;
+                border-radius: 10px;
+            }
+
+            input[type="text"] {
+                height: 50%;
+            }
+
+            .date-group {
+                width: 70%;
+                display: flex;
+                align-items: end;
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .text-group {
+                width: 60%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+            }
+
+            input[type="date"] {
+                height: 70%;
+
+            }
+
+            input[type="submit"] {
+                width: 50%;
+                height: 50%;
+                font-size: 20px;
+            }
+
+            .date-set {
+                justify-content: end;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                width: 30%;
+            }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="warn">
+        <h1>PC 페이지는 지원하지 않습니다.</h1>
+    </div>
+    <div class="header">
+        모두의 캘린더
+    </div>
+    <div class="sub-header">
+        에브리타임 시간표 to 캘린더 변환기
+    </div>
+    <form method="post">
+        <div class="form-group"></div>
+        <div class="form-group">
+            <div class="text-group">
+                <label>시간표 URL</label>
+                <input type="text" name="calendarUrl" placeholder="시간표 URL을 입력하세요." required>
+            </div>
+        </div>
+        <div class="form-group"></div>
+
+        <div class="form-group">
+            <div class="date-group">
+                <div class="date-set">
+                    <label>개강일</label>
+                    <input type="date" name="from" data-placeholder="이 곳을 터치해 개강일을 선택하세요" required>
+                </div>
+                <div class="date-set">
+                    <label>종강일</label>
+                    <input type="date" name="to" data-placeholder="이 곳을 터치해 종강일을 선택하세요" required>
+                </div>
+            </div>
+        </div>
+        <div class="form-group"></div>
+
+        <div class="form-group">
+            <input type="submit" value="변환">
+        </div>
+    </form>
+    <div class="description">
+        <div style="text-align: center">
+            <p>시간표 URL 얻는 법</p>
+            <p>에브리타임 앱 > 하단 시간표 버튼 > 우측 상단 톱니바퀴 > URL 공유</p>
+        </div>
+
+
+    </div>
+
+</body>
+</html>
