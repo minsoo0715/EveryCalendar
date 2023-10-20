@@ -23,14 +23,17 @@ public class EveryCalendarController {
         return "index";
     }
 
-    @PostMapping(value = "/")
+    @PostMapping(value = "/calendar")
     ResponseEntity<String> getIcs(@ModelAttribute GetIcsDTO getIcsDTO) throws Exception {
 
         String calendarUrl = getIcsDTO.getCalendarUrl();
         Pattern pattern = Pattern.compile("(?<=(https://everytime.kr/@))[A-Za-z0-9]{1,}");
         Matcher matcher = pattern.matcher(calendarUrl);
 
-        matcher.find();
+        if(!matcher.find()) {
+            return ResponseEntity.badRequest().body("오류가 발생했습니다.");
+        }
+
         String identifier = matcher.group();
 
         return ResponseEntity.ok()
