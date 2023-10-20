@@ -1,0 +1,39 @@
+html{
+    touch-action: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+    color: #333333
+}
+
+@font-face {
+    font-family: 'NanumSquare';
+    src: url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css') format('css');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    background-color: #FFFFFF;
+    font-family: 'NanumSquare', sans-serif;
+}
+.header {
+    font-weight: bold;
+    color: #C62A17
+}
+.sub-header {
+    color: #333333
+}
+
+* {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+input {
+    background-color: #F2F2F2 !important;
+    border: 1px solid #d6d6d6;
+}
+
+.btn {
+    width: 40%
+}
