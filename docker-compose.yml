@@ -1,0 +1,9 @@
+services:
+  everycal:
+    build:
+      dockerfile: ./Dockerfile
+    entrypoint: ./docker-entrypoint.sh
+    expose:
+      - 8080
+    ports:
+      - 8086:8080
