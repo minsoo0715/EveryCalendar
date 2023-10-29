@@ -45,9 +45,7 @@ public class EveryCalendarService {
 
     public String createIcsString(String identifier, Date startDate, Date endDate) throws Exception {
         Calendar calendar = new Calendar();
-
-        Document doc = getXmlFromEverytime(identifier);
-        Element body = doc.getDocumentElement();
+        Element body = getXmlFromEverytime(identifier);
 
         List<EventDTO> lectures = extractData(body);
 
@@ -67,7 +65,7 @@ public class EveryCalendarService {
         return calendar.toString();
     }
 
-    private Document getXmlFromEverytime(String identifier) throws Exception {
+    private Element getXmlFromEverytime(String identifier) throws Exception {
         HttpURLConnection conn = getConn("https://api.everytime.kr/find/timetable/table/friend?friendInfo=true&identifier=" + identifier, "POST");
 
         int responseCode = conn.getResponseCode();
@@ -86,12 +84,11 @@ public class EveryCalendarService {
         InputSource source = new InputSource(new StringReader(sb.toString()));
         Document doc = xmlParser.parse(source);
 
+        Element rootElement = doc.getDocumentElement();
 
-        if(doc.getDocumentElement().getTextContent().equals("-1")) {
-            throw new Exception("시간표 URL이 올바르지 않습니다.");
-        }
+        if(rootElement.getTextContent().equals("-1")) throw new Exception("시간표 URL이 올바르지 않습니다.");
 
-        return doc;
+        return rootElement;
     }
 
     private List<EventDTO> extractData(Element root) {
