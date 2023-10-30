@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,21 +25,30 @@ public class EveryCalendarController {
     }
 
     @PostMapping(value = "/calendar")
-    ResponseEntity<String> getIcs(@ModelAttribute GetIcsDTO getIcsDTO) throws Exception {
+    String getIcs(@ModelAttribute GetIcsDTO getIcsDTO, RedirectAttributes redirectAttributes) throws Exception {
 
         String calendarUrl = getIcsDTO.getCalendarUrl();
         Pattern pattern = Pattern.compile("(?<=(https://everytime.kr/@))[A-Za-z0-9]{1,}");
         Matcher matcher = pattern.matcher(calendarUrl);
 
         if(!matcher.find()) {
-            return ResponseEntity.badRequest().body("오류가 발생했습니다.");
+            throw new Exception("시간표 URL이 올바르지 않습니다.");
         }
 
         String identifier = matcher.group();
 
+        String ics = everyCalendarService.createIcsString(identifier, getIcsDTO.getFrom(), getIcsDTO.getTo());
+        redirectAttributes.addFlashAttribute("ics", ics);
+
+        return "redirect:/success";
+    }
+
+    @GetMapping("/success")
+    ResponseEntity<String> success(@ModelAttribute("ics") String ics) {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "calendar.ics" +"\"")
                 .header(HttpHeaders.CONTENT_TYPE, "text/calendar")
-                .body(everyCalendarService.createIcsString(identifier, getIcsDTO.getFrom(), getIcsDTO.getTo()));
+                .body(ics);
     }
+
 }
