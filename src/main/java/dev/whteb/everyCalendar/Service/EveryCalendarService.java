@@ -91,11 +91,14 @@ public class EveryCalendarService {
         return rootElement;
     }
 
-    private List<EventDTO> extractData(Element root) {
+    private List<EventDTO> extractData(Element root) throws Exception {
 
         ArrayList<EventDTO> lectures = new ArrayList<>();
 
         NodeList nList = root.getElementsByTagName("subject");
+
+        if(nList.getLength() == 0) throw new Exception("강의가 등록되어 있지 않거나 시간표가 비공개 되어있습니다.");
+
         for(int i = 0; i<nList.getLength(); ++i) {
             Element element = (Element) nList.item(i);
             String name =  getAttributeValue(element.getElementsByTagName("name").item(0), "value");
