@@ -45,13 +45,9 @@ public class EveryCalendarService {
 
     public String createIcsString(String identifier, Date startDate, Date endDate) throws Exception {
         Calendar calendar = new Calendar();
+        Element body = getXmlFromEverytime(identifier);
 
-        String xml = getXmlFromEverytime(identifier);
-        InputSource source = new InputSource(new StringReader(xml));
-        Document doc = xmlParser.parse(source);
-        Element root = doc.getDocumentElement();
-
-        List<EventDTO> lectures = extractData(root);
+        List<EventDTO> lectures = extractData(body);
 
         lectures.forEach(l -> {
             Date nearestDay = dateProvider.findNearestWeekDay((l.getWeekDay() + 2) % 7, startDate);
@@ -69,13 +65,13 @@ public class EveryCalendarService {
         return calendar.toString();
     }
 
-    private String getXmlFromEverytime(String identifier) throws Exception {
+    private Element getXmlFromEverytime(String identifier) throws Exception {
         HttpURLConnection conn = getConn("https://api.everytime.kr/find/timetable/table/friend?friendInfo=true&identifier=" + identifier, "POST");
 
         int responseCode = conn.getResponseCode();
 
         if (responseCode != 200) {
-            throw new Exception();
+            throw new Exception("서버가 응답하지 않습니다.");
         }
 
         BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -85,7 +81,14 @@ public class EveryCalendarService {
             sb.append(line);
         }
 
-        return sb.toString();
+        InputSource source = new InputSource(new StringReader(sb.toString()));
+        Document doc = xmlParser.parse(source);
+
+        Element rootElement = doc.getDocumentElement();
+
+        if(rootElement.getTextContent().equals("-1")) throw new Exception("시간표 URL이 올바르지 않습니다.");
+
+        return rootElement;
     }
 
     private List<EventDTO> extractData(Element root) {
