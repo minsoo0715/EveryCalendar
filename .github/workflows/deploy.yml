@@ -20,7 +20,7 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
+          cd /workspace/EveryCalendar
           git checkout deploy
           git pull origin deploy
-          cd /workspace/EveryCalendar
           docker compose up -d --build
