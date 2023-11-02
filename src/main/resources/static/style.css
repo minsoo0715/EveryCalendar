@@ -11,6 +11,15 @@ html{
     font-weight: normal;
     font-style: normal;
 }
+a {
+    color: #333333;
+    text-decoration-line: none;
+    font-weight: bold;
+}
+
+a:hover {
+    color: #C62A17
+}
 
 body {
     background-color: #FFFFFF;
