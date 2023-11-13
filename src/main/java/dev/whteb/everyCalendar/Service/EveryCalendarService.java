@@ -31,23 +31,7 @@ public class EveryCalendarService {
     private final DateProvider dateProvider;
     private final DocumentBuilder xmlParser;
     private final RestTemplate restTemplate = new RestTemplate();
-
-    private HttpHeaders getMockHttpHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAll(
-                Map.of(
-                        HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded; charset=UTF-8",
-                        HttpHeaders.CONNECTION, "keep-alive",
-                        HttpHeaders.PRAGMA, "no-cache",
-                        HttpHeaders.HOST, "api.everytime.kr",
-                        HttpHeaders.ORIGIN, "https://everytime.kr",
-                        HttpHeaders.REFERER, "https://everytime.kr",
-                        HttpHeaders.USER_AGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
-                )
-        );
-
-        return headers;
-    }
+    private final HttpHeaders mockHttpHeaders;
 
     public String createIcsString(String identifier, Date startDate, Date endDate) throws Exception {
         Calendar calendar = new Calendar();
@@ -82,7 +66,7 @@ public class EveryCalendarService {
                 .build()
                 .toUri();
 
-        ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>("", getMockHttpHeaders()), String.class);
+        ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>("", mockHttpHeaders), String.class);
 
         if (response.getStatusCode() != HttpStatus.OK) throw new Exception("서버가 응답하지 않습니다.");
 
@@ -125,7 +109,6 @@ public class EveryCalendarService {
                     );
 
         }
-
 
         return lectures;
     }
