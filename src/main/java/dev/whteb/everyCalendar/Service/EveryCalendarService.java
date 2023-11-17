@@ -6,42 +6,32 @@ import lombok.RequiredArgsConstructor;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.*;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
 public class EveryCalendarService {
     private final DateProvider dateProvider;
     private final DocumentBuilder xmlParser;
-    private HttpURLConnection getConn(String urlString, String method) throws IOException {
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        conn.setRequestProperty("Connection", "keep-alive");
-        conn.setRequestProperty("Pragma", "no-cache");
-        conn.setRequestProperty("Host", "api.everytime.kr");
-        conn.setRequestProperty("Origin", "https://everytime.kr");
-        conn.setRequestProperty("Referer", "https://everytime.kr");
-        conn.setRequestProperty("User-Agent",  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36");
-        conn.setDoOutput(true);
-        conn.setRequestMethod(method);
-        return conn;
-    }
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final HttpHeaders mockHttpHeaders;
 
     public String createIcsString(String identifier, Date startDate, Date endDate) throws Exception {
         Calendar calendar = new Calendar();
@@ -66,22 +56,21 @@ public class EveryCalendarService {
     }
 
     private Element getXmlFromEverytime(String identifier) throws Exception {
-        HttpURLConnection conn = getConn("https://api.everytime.kr/find/timetable/table/friend?friendInfo=true&identifier=" + identifier, "POST");
 
-        int responseCode = conn.getResponseCode();
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://api.everytime.kr")
+                .path("/find/timetable/table/friend")
+                .queryParam("friendInfo", true)
+                .queryParam("identifier", identifier)
+                .encode(StandardCharsets.UTF_8)
+                .build()
+                .toUri();
 
-        if (responseCode != 200) {
-            throw new Exception("서버가 응답하지 않습니다.");
-        }
+        ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>("", mockHttpHeaders), String.class);
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = br.readLine()) != null) {
-            sb.append(line);
-        }
+        if (response.getStatusCode() != HttpStatus.OK) throw new Exception("서버가 응답하지 않습니다.");
 
-        InputSource source = new InputSource(new StringReader(sb.toString()));
+        InputSource source = new InputSource(new StringReader(response.getBody()));
         Document doc = xmlParser.parse(source);
 
         Element rootElement = doc.getDocumentElement();
@@ -95,30 +84,31 @@ public class EveryCalendarService {
 
         ArrayList<EventDTO> lectures = new ArrayList<>();
 
-        NodeList nList = root.getElementsByTagName("subject");
+        NodeList subjects = root.getElementsByTagName("subject");
 
-        if(nList.getLength() == 0) throw new Exception("강의가 등록되어 있지 않거나 시간표가 비공개 되어있습니다.");
+        if(subjects.getLength() == 0) throw new Exception("강의가 등록되어 있지 않거나 시간표가 비공개 되어있습니다.");
 
-        for(int i = 0; i<nList.getLength(); ++i) {
-            Element element = (Element) nList.item(i);
+        for(int i = 0; i<subjects.getLength(); ++i) {
+            Element element = (Element) subjects.item(i);
             String name =  getAttributeValue(element.getElementsByTagName("name").item(0), "value");
 
             NodeList dataList = element.getElementsByTagName("data");
-            for(int j = 0; j < dataList.getLength(); ++j) {
-                Node data = dataList.item(j);
 
-                lectures.add(
-                    EventDTO.builder()
-                            .name(name)
-                            .startTime(Integer.parseInt(getAttributeValue(data, "starttime")) * 5 * 60 * 1000L)
-                            .endTime(Integer.parseInt(getAttributeValue(data, "endtime")) * 5 * 60 * 1000L)
-                            .weekDay(Integer.parseInt(getAttributeValue(data, "day")))
-                            .place(getAttributeValue(data, "place"))
-                            .build()
-                );
-            }
+            IntStream.range(0, dataList.getLength())
+                    .mapToObj(dataList::item)
+                    .forEach((data) ->
+                            lectures.add(
+                                    EventDTO.builder()
+                                            .name(name)
+                                            .startTime(Integer.parseInt(getAttributeValue(data, "starttime")) * 5 * 60 * 1000L)
+                                            .endTime(Integer.parseInt(getAttributeValue(data, "endtime")) * 5 * 60 * 1000L)
+                                            .weekDay(Integer.parseInt(getAttributeValue(data, "day")))
+                                            .place(getAttributeValue(data, "place"))
+                                            .build()
+                            )
+                    );
+
         }
-
 
         return lectures;
     }
