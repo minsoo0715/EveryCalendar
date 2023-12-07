@@ -1,7 +1,9 @@
 package dev.whteb.everyCalendar.Service;
 
 import dev.whteb.everyCalendar.DTO.EventDTO;
+import dev.whteb.everyCalendar.DTO.response.ResponseDTO;
 import dev.whteb.everyCalendar.Provider.DateProvider;
+import jakarta.xml.bind.Unmarshaller;
 import lombok.RequiredArgsConstructor;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
@@ -10,34 +12,28 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 
-import javax.xml.parsers.DocumentBuilder;
 import java.io.StringReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
 public class EveryCalendarService {
     private final DateProvider dateProvider;
-    private final DocumentBuilder xmlParser;
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
     private final HttpHeaders mockHttpHeaders;
+    private final Unmarshaller unmarshaller;
 
     public String createIcsString(String identifier, Date startDate, Date endDate) throws Exception {
         Calendar calendar = new Calendar();
-        Element body = getXmlFromEverytime(identifier);
 
-        List<EventDTO> lectures = extractData(body);
+        List<EventDTO> lectures = getLecturesFromEverytime(identifier);
 
         lectures.forEach(l -> {
             Date nearestDay = dateProvider.findNearestWeekDay((l.getWeekDay() + 2) % 7, startDate);
@@ -55,7 +51,7 @@ public class EveryCalendarService {
         return calendar.toString();
     }
 
-    private Element getXmlFromEverytime(String identifier) throws Exception {
+    private List<EventDTO> getLecturesFromEverytime(String identifier) throws Exception {
 
         URI uri = UriComponentsBuilder
                 .fromUriString("https://api.everytime.kr")
@@ -70,51 +66,16 @@ public class EveryCalendarService {
 
         if (response.getStatusCode() != HttpStatus.OK) throw new Exception("서버가 응답하지 않습니다.");
 
-        InputSource source = new InputSource(new StringReader(response.getBody()));
-        Document doc = xmlParser.parse(source);
 
-        Element rootElement = doc.getDocumentElement();
+        String body = response.getBody();
 
-        if(rootElement.getTextContent().equals("-1")) throw new Exception("시간표 URL이 올바르지 않습니다.");
+        StringReader bodyReader = new StringReader(body);
 
-        return rootElement;
-    }
+        ResponseDTO responseDTO = (ResponseDTO) unmarshaller.unmarshal(new InputSource(bodyReader));
 
-    private List<EventDTO> extractData(Element root) throws Exception {
+        if(responseDTO.getTable() == null) throw new Exception("시간표 URL이 올바르지 않습니다.");
+        if(responseDTO.getTable().getSubjects() == null) throw new Exception("시간표가 공개되어 있지 않거나, 등록된 강의가 없습니다.");
 
-        ArrayList<EventDTO> lectures = new ArrayList<>();
-
-        NodeList subjects = root.getElementsByTagName("subject");
-
-        if(subjects.getLength() == 0) throw new Exception("강의가 등록되어 있지 않거나 시간표가 비공개 되어있습니다.");
-
-        for(int i = 0; i<subjects.getLength(); ++i) {
-            Element element = (Element) subjects.item(i);
-            String name =  getAttributeValue(element.getElementsByTagName("name").item(0), "value");
-
-            NodeList dataList = element.getElementsByTagName("data");
-
-            IntStream.range(0, dataList.getLength())
-                    .mapToObj(dataList::item)
-                    .forEach((data) ->
-                            lectures.add(
-                                    EventDTO.builder()
-                                            .name(name)
-                                            .startTime(Integer.parseInt(getAttributeValue(data, "starttime")) * 5 * 60 * 1000L)
-                                            .endTime(Integer.parseInt(getAttributeValue(data, "endtime")) * 5 * 60 * 1000L)
-                                            .weekDay(Integer.parseInt(getAttributeValue(data, "day")))
-                                            .place(getAttributeValue(data, "place"))
-                                            .build()
-                            )
-                    );
-
-        }
-
-        return lectures;
-    }
-
-    private String getAttributeValue(Node node, String name) {
-        NamedNodeMap attributes = node.getAttributes();
-        return attributes.getNamedItem(name).getNodeValue();
+        return responseDTO.convertToEvents();
     }
 }
