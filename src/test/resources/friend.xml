@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+    <table year="2023" semester="1" status="1" identifier="XcpxVWwrOzWS8er2byhX">
+        <subject id="5989595">
+            <internal value="SYB9082-20385"/>
+            <name value="색채심리와현대생활"/>
+            <professor value=""/>
+            <time value=""/>
+            <place value=""/>
+            <credit value="3"/>
+            <closed value="0"/>
+        </subject>
+        <subject id="5990237">
+            <internal value="EEN2004-22995"/>
+            <name value="컴퓨터프로그래밍"/>
+            <professor value="홍길동"/>
+            <time value="월(14:30-16:30),화(15:00-17:00)">
+                <data day="0" starttime="174" endtime="198" place="제1공학관509강의실"/>
+                <data day="1" starttime="180" endtime="204" place="제4공학관IC-PBL실습실"/>
+            </time>
+            <place value="제1공학관509강의실,제4공학관IC-PBL실습실"/>
+            <credit value="3"/>
+            <closed value="0"/>
+        </subject>
+        <subject id="5990403">
+            <internal value="DEE2051-24168"/>
+            <name value="학술영어1:통합"/>
+            <professor value="David"/>
+            <time value="목(11:00-13:00)">
+                <data day="3" starttime="132" endtime="156" place="제1공학관124강의실"/>
+            </time>
+            <place value="제1공학관124강의실"/>
+            <credit value="2"/>
+            <closed value="0"/>
+        </subject>
+        <subject id="5990449">
+            <internal value="VCC2001-22245"/>
+            <name value="IC-PBL과취창업을위한진로탐색"/>
+            <professor value="김철수"/>
+            <time value="시간미지정강좌"/>
+            <place value="비지정()"/>
+            <credit value="1"/>
+            <closed value="0"/>
+        </subject>
+        <subject id="5990529">
+            <internal value="COE3051-22947"/>
+            <name value="공업수학1"/>
+            <professor value="김영희"/>
+            <time value="목(13:00-14:30)">
+                <data day="3" starttime="156" endtime="174" place="제3공학관219강의실"/>
+            </time>
+            <place value="제3공학관219강의실,"/>
+            <credit value="3"/>
+            <closed value="0"/>
+        </subject>
+        <subject id="5990700">
+            <internal value="ELE2003-25081"/>
+            <name value="회로이론"/>
+            <professor value="김민서"/>
+            <time value="목(16:00-18:00),수(15:00-17:00)">
+                <data day="2" starttime="180" endtime="204" place="제1공학관509강의실"/>
+                <data day="3" starttime="192" endtime="216" place="제1공학관401강의실"/>
+            </time>
+            <place value="제1공학관401강의실,제1공학관509강의실"/>
+            <credit value="4"/>
+            <closed value="0"/>
+        </subject>
+        <subject id="5990886">
+            <internal value="PHY3005-24858"/>
+            <name value="전자기학1"/>
+            <professor value="장아름"/>
+            <time value="월(13:00-14:30),화(13:00-14:30)">
+                <data day="0" starttime="156" endtime="174" place="제1공학관504강의실"/>
+                <data day="1" starttime="156" endtime="174" place="제1공학관504강의실"/>
+            </time>
+            <place value="제1공학관504강의실"/>
+            <credit value="3"/>
+            <closed value="0"/>
+        </subject>
+    </table>
+    <user name="김서준" isMine="1" isFriend="0"/>
+    <primaryTables>
+        <primaryTable year="2023" semester="2" identifier="kxhoqe1qP73OKpqRTIej"/>
+        <primaryTable year="2023" semester="1" identifier="XcpxVWwrOzWS6er0ayhX"/>
+    </primaryTables>
+</response>
