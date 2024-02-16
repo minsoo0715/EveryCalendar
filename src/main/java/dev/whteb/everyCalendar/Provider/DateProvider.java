@@ -1,5 +1,6 @@
 package dev.whteb.everyCalendar.Provider;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import java.util.Calendar;
@@ -26,5 +27,10 @@ public class DateProvider {
         }
 
         return cal.getTime();
+    }
+
+    @PostConstruct
+    private void initTimeZone() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
     }
 }
