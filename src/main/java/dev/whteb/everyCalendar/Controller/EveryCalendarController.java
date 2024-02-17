@@ -38,7 +38,7 @@ public class EveryCalendarController {
 
         String identifier = matcher.group();
 
-        String ics = everyCalendarService.createIcsString(identifier, getIcsDTO.getFrom(), getIcsDTO.getTo());
+        String ics = everyCalendarService.generateCalendar(identifier, getIcsDTO.getFrom(), getIcsDTO.getTo());
         redirectAttributes.addFlashAttribute("ics", ics);
 
         return "redirect:/success";
