@@ -1,6 +1,5 @@
 package dev.whteb.everyCalendar.Provider;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Calendar;
@@ -11,14 +10,9 @@ import java.util.TimeZone;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DateProviderTest {
-    static Date base;
-    static DateProvider dateProvider;
-    @BeforeAll
-    static void beforeAll() {
-        base = getSpecificDate(2024, Calendar.JANUARY, 5);
-        dateProvider = new DateProvider();
-        System.out.println("base = " + base);
-    }
+
+    Date base = getSpecificDate(2024, Calendar.JANUARY, 5);
+    DateProvider dateProvider = new DateProvider();
 
     @Test
     void 특정_요일_가장_가까운_날짜를_반환한다() {

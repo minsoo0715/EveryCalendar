@@ -7,6 +7,8 @@ import jakarta.xml.bind.Unmarshaller;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
@@ -24,20 +26,14 @@ import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
 class EveryCalendarServiceTest {
 
-    private static EveryCalendarService everyCalendarService;
-    private static HttpHeaders mockHttpHeaders;
+    @Autowired
+    EveryCalendarService everyCalendarService;
 
-    @BeforeAll
-    static void beforeAll() {
-        ApplicationContext ac = new AnnotationConfigApplicationContext(RequestConfig.class);
-        RestTemplate restTemplate = ac.getBean("restTemplate", RestTemplate.class);
-        mockHttpHeaders = ac.getBean("mockHttpHeaders", HttpHeaders.class);
-        Unmarshaller unmarshaller = ac.getBean("unmarshaller", Unmarshaller.class);
-
-        everyCalendarService = new EveryCalendarService(new DateProvider(), restTemplate, mockHttpHeaders, unmarshaller);
-    }
+    @Autowired
+    HttpHeaders mockHttpHeaders;
 
     @Test
     void ICAL_생성_테스트() {
