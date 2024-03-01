@@ -21,6 +21,22 @@ class DateProviderTest {
     }
 
     @Test
+    void 특정_날짜를_반환한다() {
+        int year = 2024;
+        int month = 10;
+        int day = 24;
+
+        Date date = dateProvider.getDate(year, month, day);
+        Calendar calendar = Calendar.getInstance(Locale.KOREA);
+        calendar.setTime(date);
+
+        assertThat(calendar.get(Calendar.YEAR)).isEqualTo(year);
+        assertThat(calendar.get(Calendar.MONTH)).isEqualTo(month-1);
+        assertThat(calendar.get(Calendar.DAY_OF_MONTH)).isEqualTo(day);
+
+    }
+
+    @Test
     void 특정_요일_가장_가까운_날짜를_반환한다() {
         Date thursday = dateProvider.findNearestWeekDay(Calendar.THURSDAY, base);
         System.out.println("thursday = " + thursday);

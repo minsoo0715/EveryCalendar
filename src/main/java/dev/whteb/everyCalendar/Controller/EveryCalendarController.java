@@ -1,6 +1,7 @@
 package dev.whteb.everyCalendar.Controller;
 
 import dev.whteb.everyCalendar.DTO.GetIcsDTO;
+import dev.whteb.everyCalendar.Provider.DateProvider;
 import dev.whteb.everyCalendar.Service.EveryCalendarService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,10 +9,12 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.nio.charset.StandardCharsets;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,9 +23,11 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class EveryCalendarController {
     private final EveryCalendarService everyCalendarService;
+    private final DateProvider dateProvider;
 
     @GetMapping
-    String index() {
+    String index(Model model) {
+        model.addAttribute("icsDto", new GetIcsDTO("", dateProvider.getDate(2024, 3, 4), dateProvider.getDate(2024, 6, 21)));
         return "index";
     }
 
