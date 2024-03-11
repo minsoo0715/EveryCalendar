@@ -11,9 +11,8 @@ import java.util.TimeZone;
 @Component
 public class DateProvider {
     public Date findNearestWeekDay(int weekDay, Date startDate) {
-        Calendar cal = Calendar.getInstance(Locale.KOREA);
+        Calendar cal = Calendar.getInstance();
         cal.setTime(startDate);
-        cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.clear(Calendar.MINUTE);
@@ -22,9 +21,21 @@ public class DateProvider {
 
         cal.set(Calendar.DAY_OF_WEEK, weekDay);
 
-        if(cal.getTime().getTime() < startDate.getTime()) {
+        if(cal.getTimeInMillis() < startDate.getTime()) {
             cal.add(Calendar.WEEK_OF_MONTH, 1);
         }
+
+        return cal.getTime();
+    }
+
+    public Date getDate(int year, int month, int day) {
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTimeInMillis(0);
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month-1);
+        cal.set(Calendar.DAY_OF_MONTH, day);
+
 
         return cal.getTime();
     }

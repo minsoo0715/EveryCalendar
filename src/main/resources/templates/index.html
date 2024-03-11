@@ -17,10 +17,10 @@
         <p class="text-center">에브리타임 시간표 -> 캘린더 변환</p>
     </div>
     <div class="container-fluid form-group mt-5">
-        <form method="post" action="/calendar">
+        <form method="post" action="http://localhost:8080/calendar" th:action="@{/calendar}" th:object="${icsDto}">
             <div class="mb-3">
                 <label for="calendarUrl" class="form-label">시간표 URL</label>
-                <input type="text" class="form-control form-control-lg" id="calendarUrl" name="calendarUrl" placeholder="시간표 URL을 입력하세요." aria-describedby="urlHelp" pattern="https://everytime.kr/@[A-Za-z0-9]{1,}" required>
+                <input type="text" class="form-control form-control-lg" id="calendarUrl" th:field="*{calendarUrl}" placeholder="시간표 URL을 입력하세요." aria-describedby="urlHelp" pattern="https://everytime.kr/@[A-Za-z0-9]{1,}" required>
                 <div id="urlHelp" class="form-text text-left">1. 에타 접속 > 하단 시간표 아이콘 > 우측 상단 톱니바퀴 > 공개 범위 변경 > 전체 공개</div>
                 <div id="urlHelp2" class="form-text text-left">2. 우측 상단 톱니바퀴 > URL 공유</div>
 
@@ -28,11 +28,11 @@
             <div class="row mb-5">
                 <div class="col">
                     <label for="from" class="form-label">개강일</label>
-                    <input type="date" id="from" name="from" class="form-control" aria-label="개강일" required>
+                    <input type="date" id="from" th:field="*{from}" class="form-control" aria-label="개강일" required>
                 </div>
                 <div class="col">
                     <label for="to" class="form-label">종강일</label>
-                    <input type="date" id="to" name="to" class="form-control" aria-label="종강일" required>
+                    <input type="date" id="to" th:field="*{to}" class="form-control" aria-label="종강일" required>
                 </div>
             </div>
             <div class="mb-3 text-center">
@@ -43,12 +43,5 @@
             </div>
         </form>
     </div>
-
-    <script>
-        // TODO: 개강일, 종강일을 알아서 주입하도록 변경
-        document.getElementById("from").value = '2023-09-01'
-        document.getElementById("to").value = '2023-12-21'
-
-    </script>
 </body>
 </html>
