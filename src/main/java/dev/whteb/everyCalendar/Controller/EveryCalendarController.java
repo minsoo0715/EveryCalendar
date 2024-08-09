@@ -27,7 +27,7 @@ public class EveryCalendarController {
 
     @GetMapping
     String index(Model model) {
-        model.addAttribute("icsDto", new GetIcsDTO("", dateProvider.getDate(2024, 3, 4), dateProvider.getDate(2024, 6, 21)));
+        model.addAttribute("icsDto", new GetIcsDTO("", dateProvider.getDate(2024, 9, 2), dateProvider.getDate(2024, 12, 21)));
         return "index";
     }
 
