@@ -14,6 +14,15 @@ import lombok.ToString;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SubjectDTO {
 
+    @Getter
+    @Setter
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @ToString
+    static class Property {
+        @XmlAttribute
+        String value;
+    }
+
     @XmlElement
     private Property internal;
 
@@ -26,13 +35,4 @@ public class SubjectDTO {
     @XmlElement(name="time")
     private TimeDTO time;
 
-}
-
-@Getter
-@Setter
-@XmlAccessorType(XmlAccessType.FIELD)
-@ToString
-class Property {
-    @XmlAttribute
-    String value;
 }
